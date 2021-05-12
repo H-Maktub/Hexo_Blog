@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>openwrt之shadowsock做PAC代理</title>
+    <url>/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/</url>
+    <content><![CDATA[<h2 id="安装配置shadowsocks-ChinaDNS-dns-forwarder"><a href="#安装配置shadowsocks-ChinaDNS-dns-forwarder" class="headerlink" title="安装配置shadowsocks+ChinaDNS+dns-forwarder"></a>安装配置<code>shadowsocks</code>+<code>ChinaDNS</code>+<code>dns-forwarder</code></h2><h3 id="添加软件源"><a href="#添加软件源" class="headerlink" title="添加软件源"></a>添加软件源</h3><ol>
+<li>添加证书<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;openwrt-dist.pub</span><br><span class="line">opkg-key add openwrt-dist.pub</span><br></pre></td></tr></table></figure></li>
+<li>编辑<code>/etc/opkg/customfeeds.conf</code>,添加软件源<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">src&#x2F;gz openwrt_dist http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64</span><br><span class="line">src&#x2F;gz openwrt_dist_luci http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;luci</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="在线安装"><a href="#在线安装" class="headerlink" title="在线安装"></a>在线安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install ChinaDNS</span><br><span class="line">opkg install luci-app-chinadns</span><br><span class="line">opkg install dns-forwarder</span><br><span class="line">opkg install luci-app-dns-forwarder</span><br><span class="line">opkg install shadowsocks-libev</span><br><span class="line">opkg install luci-app-shadowsocks</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="离线安装"><a href="#离线安装" class="headerlink" title="离线安装"></a>离线安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg update</span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;ChinaDNS_1.3.3-1_x86_64.ipk</span><br><span class="line">opkg install ChinaDNS_1.3.3-1_x86_64.ipk </span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;dns-forwarder_1.2.1-2_x86_64.ipk</span><br><span class="line">opkg install dns-forwarder_1.2.1-2_x86_64.ipk</span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;shadowsocks-libev_3.3.4-1_x86_64.ipk</span><br><span class="line">opkg install shadowsocks-libev_3.3.4-1_x86_64.ipk</span><br><span class="line">opkg install luci-app-chinadns</span><br><span class="line">opkg install luci-app-dns-forwarder</span><br><span class="line">opkg install luci-app-shadowsocks</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置shadowsocks"><a href="#配置shadowsocks" class="headerlink" title="配置shadowsocks"></a>配置<code>shadowsocks</code></h3><h4 id="添加服务器"><a href="#添加服务器" class="headerlink" title="添加服务器"></a>添加服务器</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/00.png"></p>
+<h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/01.png"> </p>
+<h4 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/02.png"></p>
+<h3 id="配置ChinaDNS"><a href="#配置ChinaDNS" class="headerlink" title="配置ChinaDNS"></a>配置<code>ChinaDNS</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/03.png"></p>
+<h3 id="配置dns-forwarder"><a href="#配置dns-forwarder" class="headerlink" title="配置dns-forwarder"></a>配置<code>dns-forwarder</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/04.png"></p>
+<h2 id="安装配置HTTP代理privoxy-可选"><a href="#安装配置HTTP代理privoxy-可选" class="headerlink" title="安装配置HTTP代理privoxy(可选)"></a>安装配置HTTP代理<code>privoxy</code>(可选)</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install privoxy </span><br><span class="line">opkg install luci-app-privoxy </span><br><span class="line">opkg install luci-i18n-privoxy-zh-cn</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-方式一（注意先，先配置好再启动）"><a href="#配置-方式一（注意先，先配置好再启动）" class="headerlink" title="配置 方式一（注意先，先配置好再启动）"></a>配置 方式一<code>（注意先，先配置好再启动）</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/05.png"><br><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/06.png"></p>
+<h3 id="配置-方式二"><a href="#配置-方式二" class="headerlink" title="配置 方式二"></a>配置 方式二</h3><h4 id="编辑-etc-config-privoxy"><a href="#编辑-etc-config-privoxy" class="headerlink" title="编辑/etc/config/privoxy"></a>编辑<code>/etc/config/privoxy</code></h4><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">config privoxy &#39;privoxy&#39;</span><br><span class="line">        option confdir &#39;&#x2F;etc&#x2F;privoxy&#39;</span><br><span class="line">        option logdir &#39;&#x2F;var&#x2F;log&#39;</span><br><span class="line">        option logfile &#39;privoxy.log&#39;</span><br><span class="line">        list filterfile &#39;default.filter&#39;</span><br><span class="line">        list actionsfile &#39;match-all.action&#39;</span><br><span class="line">        list actionsfile &#39;default.action&#39;</span><br><span class="line">        list listen_address &#39;0.0.0.0:8118&#39;</span><br><span class="line">        option toggle &#39;1&#39;</span><br><span class="line">        option enable_remote_toggle &#39;1&#39;</span><br><span class="line">        option enable_edit_actions &#39;1&#39;</span><br><span class="line">        option forwarded_connect_retries &#39;0&#39;</span><br><span class="line">        option keep_alive_timeout &#39;300&#39;</span><br><span class="line">        option debug_512 &#39;1&#39;</span><br><span class="line">        option debug_4096 &#39;1&#39;</span><br><span class="line">        option debug_8192 &#39;1&#39;</span><br><span class="line">        list forward_socks5 &#39;&#x2F; 127.0.0.1:1080    .&#39;</span><br><span class="line">        list forward &#39;192.168.*.*&#x2F;      .&#39;</span><br><span class="line">        list forward &#39;127.*.*.*&#x2F;        .&#39;</span><br><span class="line">        list forward &#39;10.*.*.*&#x2F; .&#39;</span><br><span class="line">        list forward &#39;localhost&#x2F; .&#39;</span><br><span class="line"></span><br><span class="line">config system &#39;system&#39;</span><br><span class="line">        option boot_delay &#39;5&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置PAC文件"><a href="#配置PAC文件" class="headerlink" title="配置PAC文件"></a>配置<code>PAC</code>文件</h2><h3 id="安装pip"><a href="#安装pip" class="headerlink" title="安装pip"></a>安装<code>pip</code></h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install python3-pip</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装genpac"><a href="#安装genpac" class="headerlink" title="安装genpac"></a>安装<code>genpac</code></h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install genpac</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成SOCKS5代理方式"><a href="#生成SOCKS5代理方式" class="headerlink" title="生成SOCKS5代理方式"></a>生成<code>SOCKS5</code>代理方式</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成HTTP代理方式"><a href="#生成HTTP代理方式" class="headerlink" title="生成HTTP代理方式"></a>生成<code>HTTP</code>代理方式</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;PROXY 192.168.3.2:8118&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动更新配置"><a href="#自动更新配置" class="headerlink" title="自动更新配置"></a>自动更新配置</h2><h3 id="新建脚本"><a href="#新建脚本" class="headerlink" title="新建脚本"></a>新建脚本</h3><ul>
+<li><p><code>/etc/script/gen_pac.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;usr&#x2F;bin&#x2F;genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure></li>
+<li><p><code>/etc/script/gen_chnroute.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;bin&#x2F;wget -O- &#39;http:&#x2F;&#x2F;ftp.apnic.net&#x2F;apnic&#x2F;stats&#x2F;apnic&#x2F;delegated-apnic-latest&#39; | awk -F\| &#39;&#x2F;CN\|ipv4&#x2F; &#123; printf(&quot;%s&#x2F;%d\n&quot;, $4, 32-log($5)&#x2F;log(2)) &#125;&#39; &gt; &#x2F;etc&#x2F;chinadns_chnroute.txt</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="更改权限"><a href="#更改权限" class="headerlink" title="更改权限"></a>更改权限</h3><p><code>系统</code> &gt;&gt; <code>计划任务</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chmod +x &#x2F;etc&#x2F;script&#x2F;gen_pac.sh</span><br><span class="line">chmod +x &#x2F;etc&#x2F;script&#x2F;gen_chnroute.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加定时任务"><a href="#添加定时任务" class="headerlink" title="添加定时任务"></a>添加定时任务</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">14  4  8  *  *  sh &#x2F;etc&#x2F;script&#x2F;gen_chnroute.sh </span><br><span class="line">14  4  8  *  *  sh &#x2F;etc&#x2F;script&#x2F;gen_pac.sh </span><br></pre></td></tr></table></figure>
+<p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/07.png"></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="macos系统"><a href="#macos系统" class="headerlink" title="macos系统"></a>macos系统</h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/08.png"></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="http://openwrt-dist.sourceforge.net/">openwrt shadowsock 教程</a></li>
+<li><a href="https://github.com/JinnLynn/genpac">genpac</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>openwrt</tag>
+        <tag>shadowsock</tag>
+        <tag>privoxy</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openwrt之zerotier异地组网</title>
+    <url>/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/</url>
+    <content><![CDATA[<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install zerotier</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置zerotier"><a href="#配置zerotier" class="headerlink" title="配置zerotier"></a>配置<code>zerotier</code></h2><h3 id="编辑-etc-config-zerotier"><a href="#编辑-etc-config-zerotier" class="headerlink" title="编辑/etc/config/zerotier"></a>编辑<code>/etc/config/zerotier</code></h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">config zerotier sample_config</span><br><span class="line">        option enabled 1</span><br><span class="line">        option config_path &#39;&#x2F;etc&#x2F;zerotier&#39;</span><br><span class="line">        option secret &#39;&#39;</span><br><span class="line">        list join &#39;填入自己网络id&#39; </span><br></pre></td></tr></table></figure>
+
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir &#x2F;etc&#x2F;zerotier</span><br><span class="line">&#x2F;etc&#x2F;init.d&#x2F;zerotier start</span><br></pre></td></tr></table></figure>
+
+<h3 id="开机启动"><a href="#开机启动" class="headerlink" title="开机启动"></a>开机启动</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;etc&#x2F;init.d&#x2F;zerotier enable</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="openwrt添加网络接口"><a href="#openwrt添加网络接口" class="headerlink" title="openwrt添加网络接口"></a>openwrt添加网络接口</h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/00.png"><br><img src="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/01.png"></p>
+<h3 id="配置zerotier-1"><a href="#配置zerotier-1" class="headerlink" title="配置zerotier"></a>配置zerotier</h3><ol>
+<li>登陆zerotier，配置ip<br><img src="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/02.png"></li>
+<li>配置zerotier路由(本人用的是192.168.9.100，请自行更改ip)<br><img src="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/03.png"></li>
+</ol>
+<h3 id="配置openwrt防火墙"><a href="#配置openwrt防火墙" class="headerlink" title="配置openwrt防火墙"></a>配置openwrt防火墙</h3><ol>
+<li>添加基本防火墙设置<br><img src="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/04.png"></li>
+<li>添加自定义规则<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">iptables -I FORWARD -i ztr2qvners -j ACCEPT</span><br><span class="line">iptables -I FORWARD -o ztr2qvners -j ACCEPT</span><br><span class="line">iptables -t nat -I POSTROUTING -o ztr2qvners -j MASQUERADE</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><blockquote>
+<p>配置完成后，可以用zerotier客户端连接家里的网络，但是网段不能和家里的网段一样，会冲突。</p>
+</blockquote>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://www.zerotier.com/">Zerotier官网</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>openwrt</tag>
+        <tag>zerotier</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openwrt之安装配置</title>
+    <url>/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/</url>
+    <content><![CDATA[<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>MACOS 10.15</li>
+<li>ESXI 6.7</li>
+</ul>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><h3 id="镜像文件转换"><a href="#镜像文件转换" class="headerlink" title="镜像文件转换"></a>镜像文件转换</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">brew install qemu</span><br><span class="line">qemu-img convert -f raw -O vmdk ~&#x2F;Downloads&#x2F;openwrt-19.07.0-x86-64-combined-ext4.img openwrt-19.07.0-x86-64-combined-ext4.vmdk</span><br></pre></td></tr></table></figure>
+
+<h3 id="Esxi镜像转换"><a href="#Esxi镜像转换" class="headerlink" title="Esxi镜像转换"></a>Esxi镜像转换</h3><ol>
+<li>上传文件<br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/00.png"></li>
+<li>转换<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vmkfstools -i openwrt-19.07.0-x86-64-combined-ext4.vmdk openwrt.vmdk -d thin</span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+</ol>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/01.png"><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/02.png"><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/03.png"><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/04.png"><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/05.png"><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/06.png"></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="作为旁路由设置IP"><a href="#作为旁路由设置IP" class="headerlink" title="作为旁路由设置IP"></a>作为旁路由设置IP</h3><ul>
+<li><p>修改<code>/etc/config/network</code><br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/07.png"></p>
+</li>
+<li><p>重启网络</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;etc&#x2F;init.d&#x2F;network reload</span><br></pre></td></tr></table></figure></li>
+<li><p>登陆系统后配置网络<br><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/08.png"></p>
+</li>
+<li><p>如果作为旁路由，请关闭DHCP</p>
+</li>
+<li><p><img src="/2020/01/11/openwrt%E4%B9%8B%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE/09.png"></p>
+</li>
+</ul>
+<h3 id="更新软件包列表"><a href="#更新软件包列表" class="headerlink" title="更新软件包列表"></a>更新软件包列表</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg update</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装中文包"><a href="#安装中文包" class="headerlink" title="安装中文包"></a>安装中文包</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">opkg install luci-i18n-base-zh-cn</span><br><span class="line">opkg install luci-i18n-firewall-zh-cn</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://openwrt.org/docs/guide-user/virtualization/vmware">OpenWrt on VMware HowTo</a></li>
+<li><a href="https://downloads.openwrt.org/releases/19.07.0/targets/x86/64/">Image Files</a></li>
+<li><a href="https://openwrt.org/zh-cn/doc/uci/network">网络设置</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>openwrt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openwrt之shadowsock服务器搭建</title>
+    <url>/2020/04/12/openwrt%E4%B9%8Bshadowsock%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/</url>
+    <content><![CDATA[<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>debian10</li>
+<li>shadowsocks-libev</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="官方源安装"><a href="#官方源安装" class="headerlink" title="官方源安装"></a>官方源安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install shadowsocks-libev</span><br></pre></td></tr></table></figure>
+
+<h3 id="官方源最新版本安装"><a href="#官方源最新版本安装" class="headerlink" title="官方源最新版本安装"></a>官方源最新版本安装</h3><ul>
+<li>添加软件源，编辑<code>/etc/apt/sources.list</code>，添加：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">deb http:&#x2F;&#x2F;deb.debian.org&#x2F;debian buster-backports main</span><br></pre></td></tr></table></figure></li>
+<li>安装<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt-get -t buster-backports install &quot;shadowsocks-libev&quot;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><ul>
+<li><p>编辑配置文件<code> /etc/shadowsocks-libev/ssconfig.json</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;server&quot;:[&quot;::1&quot;, &quot;0.0.0.0&quot;],</span><br><span class="line">    &quot;mode&quot;:&quot;tcp_and_udp&quot;,</span><br><span class="line">    &quot;port_password&quot;: &#123;</span><br><span class="line">        &quot;port1&quot;: &quot;password1&quot;,</span><br><span class="line">        &quot;port2&quot;: &quot;password2&quot;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;timeout&quot;:60,</span><br><span class="line">    &quot;method&quot;:&quot;chacha20-ietf-poly1305&quot;,</span><br><span class="line">    &quot;fast_open&quot;:true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p>创建系统服务<code>/etc/systemd/system/ssmanager.service</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Shadowsocks Manager Server</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">[Service]</span><br><span class="line">User&#x3D;root</span><br><span class="line">Group&#x3D;root</span><br><span class="line">KillMode&#x3D;mixed</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;ss-manager --manager-address &#x2F;var&#x2F;run&#x2F;shadowsocks-manager.sock -c &#x2F;etc&#x2F;shadowsocks-libev&#x2F;ssconfig.json</span><br><span class="line">ExecReload&#x3D;&#x2F;bin&#x2F;kill -s HUP $MAINPID</span><br><span class="line">ExecStop&#x3D;&#x2F;bin&#x2F;kill -s QUIT $MAINPID</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure></li>
+<li><p>开启服务</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl start ssmanager</span><br><span class="line">systemctl enable ssmanager</span><br></pre></td></tr></table></figure>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2></li>
+<li><p>开启BBR</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;tcp_bbr&quot; | sudo tee --append &#x2F;etc&#x2F;modules-load.d&#x2F;modules.conf</span><br></pre></td></tr></table></figure></li>
+<li><p>优化内核，编辑<code>/etc/sysctl.conf</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fs.file-max &#x3D; 51200</span><br><span class="line">net.core.rmem_max &#x3D; 67108864</span><br><span class="line">net.core.wmem_max &#x3D; 67108864</span><br><span class="line">net.core.netdev_max_backlog &#x3D; 250000</span><br><span class="line">net.core.somaxconn &#x3D; 4096</span><br><span class="line">net.ipv4.tcp_syncookies &#x3D; 1</span><br><span class="line">net.ipv4.tcp_tw_reuse &#x3D; 1</span><br><span class="line">net.ipv4.tcp_tw_recycle &#x3D; 0</span><br><span class="line">net.ipv4.tcp_fin_timeout &#x3D; 30</span><br><span class="line">net.ipv4.tcp_keepalive_time &#x3D; 1200</span><br><span class="line">net.ipv4.ip_local_port_range &#x3D; 10000 65000</span><br><span class="line">net.ipv4.tcp_max_syn_backlog &#x3D; 8192</span><br><span class="line">net.ipv4.tcp_max_tw_buckets &#x3D; 5000</span><br><span class="line">net.ipv4.tcp_fastopen &#x3D; 3</span><br><span class="line">net.ipv4.tcp_mem &#x3D; 25600 51200 102400</span><br><span class="line">net.ipv4.tcp_rmem &#x3D; 4096 87380 67108864</span><br><span class="line">net.ipv4.tcp_wmem &#x3D; 4096 65536 67108864</span><br><span class="line">net.ipv4.tcp_mtu_probing &#x3D; 1</span><br><span class="line">net.core.default_qdisc&#x3D;fq</span><br><span class="line">net.ipv4.tcp_congestion_control&#x3D;bbr</span><br></pre></td></tr></table></figure></li>
+<li><p>重启电脑后，检查是否开启bbr</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">## 第一项检查：</span><br><span class="line">sysctl net.ipv4.tcp_available_congestion_control | grep bbr</span><br><span class="line">## 若已开启bbr，结果通常为以下两种：</span><br><span class="line">net.ipv4.tcp_available_congestion_control &#x3D; bbr cubic reno</span><br><span class="line">net.ipv4.tcp_available_congestion_control &#x3D; reno cubic bbr</span><br><span class="line">## 第二项检查：</span><br><span class="line">sysctl net.ipv4.tcp_congestion_control | grep bbr</span><br><span class="line">## 若已开启bbr，结果如下：</span><br><span class="line">net.ipv4.tcp_congestion_control &#x3D; bbr</span><br><span class="line">## 第三项检查：</span><br><span class="line">sysctl net.core.default_qdisc | grep fq</span><br><span class="line">## 若已开启bbr，结果如下：</span><br><span class="line">net.core.default_qdisc &#x3D; fq</span><br><span class="line">## 第四项检查：</span><br><span class="line">lsmod | grep bbr</span><br><span class="line">## 若已开启bbr，结果可能如下。并不是所有的 VPS 都会有此返回值，若没有也属正常。</span><br><span class="line">tcp_bbr 20480 2</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://github.com/shadowsocks/shadowsocks-libev">shadowsocks-libev</a></li>
+</ul>
+<h2 id="快速搭建"><a href="#快速搭建" class="headerlink" title="快速搭建"></a>快速搭建</h2><ul>
+<li><a href="https://getoutline.org/">outline</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>shadowsock</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Esxi之kvm安装黑苹果</title>
+    <url>/2020/06/10/Esxi%E4%B9%8Bkvm%E5%AE%89%E8%A3%85%E9%BB%91%E8%8B%B9%E6%9E%9C/</url>
+    <content><![CDATA[<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>debian server(无桌面)</li>
+<li>kvm虚拟机</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="安装黑苹果"><a href="#安装黑苹果" class="headerlink" title="安装黑苹果"></a>安装黑苹果</h3><ul>
+<li><p>安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install qemu-system qemu-utils python3 python3-pip</span><br></pre></td></tr></table></figure></li>
+<li><p>下载git仓库<code>macOS-Simple-KVM</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;foxlet&#x2F;macOS-Simple-KVM.git</span><br></pre></td></tr></table></figure></li>
+<li><p>初始化镜像和初始化kvm硬盘(建议至少120G以上)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd macOS-Simple-KVM</span><br><span class="line">#可能会失败，重复到成功</span><br><span class="line">.&#x2F;jumpstart.sh</span><br><span class="line">qemu-img create -f qcow2 MyDisk.qcow2 120G</span><br></pre></td></tr></table></figure></li>
+<li><p>启动黑苹果</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">HEADLESS&#x3D;1 MEM&#x3D;8G CPUS&#x3D;4 SYSTEM_DISK&#x3D;MyDisk.qcow2 .&#x2F;headless.sh</span><br></pre></td></tr></table></figure></li>
+<li><p>使用VNC软件连接debian服务器</p>
+</li>
+<li><p>安装黑苹果</p>
+<blockquote>
+<p>先初始化硬盘，后安装镜像，初始化安装可能会失败，重复到可以为止</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="桥接网络"><a href="#桥接网络" class="headerlink" title="桥接网络"></a>桥接网络</h3><ul>
+<li>安装依赖<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apt install bridge-utils</span><br><span class="line">apt install uml-utilities</span><br><span class="line">apt install net-tools</span><br></pre></td></tr></table></figure></li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p>编辑启动脚本<code>macos.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#启动桥接网卡,ens192为物理网卡，请自行修改</span><br><span class="line">brctl addbr br0</span><br><span class="line">ip addr flush dev ens192</span><br><span class="line">brctl addif br0 ens192</span><br><span class="line">tunctl -t tap0 -u root</span><br><span class="line">brctl addif br0 tap0</span><br><span class="line">ifconfig ens192 up</span><br><span class="line">ifconfig tap0 up</span><br><span class="line">ifconfig br0 up</span><br><span class="line">#dhclient -v br0</span><br><span class="line">ifconfig br0 192.168.3.28 netmask 255.255.255.0</span><br><span class="line">route add default gw 192.168.3.1</span><br><span class="line"></span><br><span class="line">#启动黑苹果</span><br><span class="line">cd &#x2F;root&#x2F;macOS-Simple-KVM</span><br><span class="line">sh startmacos.sh </span><br></pre></td></tr></table></figure></li>
+<li><p>复制<code>headless.sh</code>文件为<code>startmacos.sh</code>,并修改相关参数，以下为个人修改参考</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;bash</span><br><span class="line"></span><br><span class="line">OSK&#x3D;&quot;ourhardworkbythesewordsguardedpleasedontsteal(c)AppleComputerInc&quot;</span><br><span class="line">VMDIR&#x3D;$PWD</span><br><span class="line">OVMF&#x3D;$VMDIR&#x2F;firmware</span><br><span class="line"></span><br><span class="line">qemu-system-x86_64 \</span><br><span class="line">    -enable-kvm \</span><br><span class="line">    -m 12G \</span><br><span class="line">    -machine q35,accel&#x3D;kvm \</span><br><span class="line">    -smp 4,cores&#x3D;4  \</span><br><span class="line">    -cpu Penryn,vendor&#x3D;GenuineIntel,kvm&#x3D;on,+sse3,+sse4.2,+aes,+xsave,+avx,+xsaveopt,+xsavec,+xgetbv1,+avx2,+bmi2,+smep,+bmi1,+fma,+movbe,+invtsc \</span><br><span class="line">    -device isa-applesmc,osk&#x3D;&quot;$OSK&quot; \</span><br><span class="line">    -smbios type&#x3D;2 \</span><br><span class="line">    -drive if&#x3D;pflash,format&#x3D;raw,readonly,file&#x3D;&quot;$OVMF&#x2F;OVMF_CODE.fd&quot; \</span><br><span class="line">    -drive if&#x3D;pflash,format&#x3D;raw,file&#x3D;&quot;$OVMF&#x2F;OVMF_VARS-1024x768.fd&quot; \</span><br><span class="line">    -vga qxl \</span><br><span class="line">    -usb -device usb-kbd -device usb-tablet \</span><br><span class="line">    -netdev tap,id&#x3D;net0,ifname&#x3D;tap0,script&#x3D;no,downscript&#x3D;no \</span><br><span class="line">    -device vmxnet3,netdev&#x3D;net0,id&#x3D;net0,mac&#x3D;52:54:00:0e:0d:20 \</span><br><span class="line">    -device ich9-ahci,id&#x3D;sata \</span><br><span class="line">    -drive id&#x3D;ESP,if&#x3D;none,format&#x3D;qcow2,file&#x3D;ESP.qcow2 \</span><br><span class="line">    -device ide-hd,bus&#x3D;sata.2,drive&#x3D;ESP \</span><br><span class="line">    -drive id&#x3D;InstallMedia,format&#x3D;raw,if&#x3D;none,file&#x3D;BaseSystem.img \</span><br><span class="line">    -device ide-hd,bus&#x3D;sata.3,drive&#x3D;InstallMedia \</span><br><span class="line">    -drive id&#x3D;SystemDisk,if&#x3D;none,file&#x3D;MyDisk.qcow2 \</span><br><span class="line">    -device ide-hd,bus&#x3D;sata.4,drive&#x3D;SystemDisk \</span><br><span class="line">    -nographic -vnc :0 -k en-us</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="开机启动"><a href="#开机启动" class="headerlink" title="开机启动"></a>开机启动</h2><ul>
+<li><p>创建服务，创建文件<code>/lib/systemd/system/macos.service</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;macos</span><br><span class="line">[Service]</span><br><span class="line">Type&#x3D;simple</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;sh &#x2F;root&#x2F;macos.sh</span><br><span class="line">User&#x3D;root</span><br><span class="line">[Install]</span><br><span class="line">WantedBy&#x3D;multi-user.target</span><br></pre></td></tr></table></figure></li>
+<li><p>开机启动</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">systemctl enable macos</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a href="https://github.com/foxlet/macOS-Simple-KVM">macOS-Simple-KVM</a></li>
+<li><a href="https://gist.github.com/extremecoders-re/e8fd8a67a515fee0c873dcafc81d811c">qemu-networking</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>esxi</tag>
+        <tag>kvm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Esxi之kvm-opencore-bigsur黑苹果</title>
+    <url>/2021/05/03/Esxi%E4%B9%8Bkvm-opencore-bigsur%E9%BB%91%E8%8B%B9%E6%9E%9C/</url>
+    <content><![CDATA[<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul>
+<li>debian server(无桌面)</li>
+<li>kvm虚拟机</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="开启虚拟机的虚拟化"><a href="#开启虚拟机的虚拟化" class="headerlink" title="开启虚拟机的虚拟化"></a>开启虚拟机的虚拟化</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo 1 | sudo tee &#x2F;sys&#x2F;module&#x2F;kvm&#x2F;parameters&#x2F;ignore_msrs</span><br><span class="line">sudo cp kvm.conf &#x2F;etc&#x2F;modprobe.d&#x2F;kvm.conf  ## for intel boxes</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装软件"><a href="#安装软件" class="headerlink" title="安装软件"></a>安装软件</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install qemu uml-utilities virt-manager git wget libguestfs-tools p7zip-full -y</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;kholia&#x2F;OSX-KVM.git</span><br><span class="line">cd OSX-KVM</span><br><span class="line">.&#x2F;fetch-macOS-v2.py</span><br><span class="line">qemu-img convert BaseSystem.dmg -O raw BaseSystem.img</span><br><span class="line">qemu-img create -f qcow2 mac_hdd_ng.img 256G</span><br></pre></td></tr></table></figure>
+
+<h3 id="无界面启动安装"><a href="#无界面启动安装" class="headerlink" title="无界面启动安装"></a>无界面启动安装</h3><p>修改<code>OpenCore-Boot.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">#安装完毕后屏蔽启动盘</span><br><span class="line">-device ide-hd,bus&#x3D;sata.3,drive&#x3D;InstallMedia</span><br><span class="line">-drive id&#x3D;InstallMedia,if&#x3D;none,file&#x3D;&quot;$REPO_PATH&#x2F;BaseSystem.img&quot;,format&#x3D;raw</span><br><span class="line"></span><br><span class="line">#网络桥接或虚拟网络选择</span><br><span class="line">-netdev tap,id&#x3D;net0,ifname&#x3D;tap0,script&#x3D;no,downscript&#x3D;no -device vmxnet3,netdev&#x3D;net0,id&#x3D;net0,mac&#x3D;52:54:00:c9:18:27</span><br><span class="line">#-netdev user,id&#x3D;net0 -device vmxnet3,netdev&#x3D;net0,id&#x3D;net0,mac&#x3D;52:54:00:c9:18:27</span><br><span class="line"></span><br><span class="line">#屏蔽，不然启动不了</span><br><span class="line">## -monitor stdio</span><br><span class="line">  </span><br><span class="line">#先使用-vga qxl进行安装</span><br><span class="line">-device VGA,vgamem_mb&#x3D;128</span><br><span class="line">#-vga qxl</span><br><span class="line"></span><br><span class="line">#安装完毕后关闭vnc</span><br><span class="line">-nographic</span><br><span class="line">#-nographic -vnc :0 -k en-us</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="网络配置"><a href="#网络配置" class="headerlink" title="网络配置"></a>网络配置</h2><h3 id="操作参考下文"><a href="#操作参考下文" class="headerlink" title="操作参考下文"></a>操作参考下文</h3><p><a href="https://blog.maktub.cn/2020/06/10/Esxi%E4%B9%8Bkvm%E5%AE%89%E8%A3%85%E9%BB%91%E8%8B%B9%E6%9E%9C/">Esxi之kvm安装黑苹果</a></p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li><a href="https://github.com/kholia/OSX-KVM.git">OSX-KVM</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>软路由</category>
+      </categories>
+      <tags>
+        <tag>esxi</tag>
+        <tag>kvm</tag>
+        <tag>big sur</tag>
+      </tags>
+  </entry>
+</search>

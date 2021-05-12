@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;blog.maktub.cn&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;right&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:true,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:true,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;},&quot;path&quot;:&quot;&#x2F;search.xml&quot;,&quot;localsearch&quot;:{&quot;enable&quot;:true,&quot;trigger&quot;:&quot;auto&quot;,&quot;top_n_per_article&quot;:1,&quot;unescape&quot;:false,&quot;preload&quot;:false}}</script>
+<meta name="description" content="安装配置shadowsocks+ChinaDNS+dns-forwarder添加软件源 添加证书12wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;openwrt-dist.pubopkg-key add openwrt-dist.pub 编辑&#x2F;etc&#x2F;opkg&#x2F;customfeeds.conf,添加软件源12src&#x2F;gz">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openwrt之shadowsock做PAC代理">
+<meta property="og:url" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/index.html">
+<meta property="og:site_name" content="Maktub_Blog">
+<meta property="og:description" content="安装配置shadowsocks+ChinaDNS+dns-forwarder添加软件源 添加证书12wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;openwrt-dist.pubopkg-key add openwrt-dist.pub 编辑&#x2F;etc&#x2F;opkg&#x2F;customfeeds.conf,添加软件源12src&#x2F;gz">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/00.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/01.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/02.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/03.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/04.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/05.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/06.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/07.png">
+<meta property="og:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/08.png">
+<meta property="article:published_time" content="2020-01-11T21:51:33.000Z">
+<meta property="article:modified_time" content="2020-01-11T21:51:33.000Z">
+<meta property="article:author" content="Maktub_小明">
+<meta property="article:tag" content="openwrt">
+<meta property="article:tag" content="shadowsock">
+<meta property="article:tag" content="privoxy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/00.png">
+
+
+<link rel="canonical" href="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;https:&#x2F;&#x2F;blog.maktub.cn&#x2F;2020&#x2F;01&#x2F;11&#x2F;openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86&#x2F;&quot;,&quot;path&quot;:&quot;2020&#x2F;01&#x2F;11&#x2F;openwrt之shadowsock做PAC代理&#x2F;&quot;,&quot;title&quot;:&quot;openwrt之shadowsock做PAC代理&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>openwrt之shadowsock做PAC代理 | Maktub_Blog</title><script src="/js/config.js"></script>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZKKH7RF2CP"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{&quot;tracking_id&quot;:&quot;G-ZKKH7RF2CP&quot;,&quot;only_pageview&quot;:false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Maktub_Blog</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">7</span></a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">1</span></a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">6</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEshadowsocks-ChinaDNS-dns-forwarder"><span class="nav-number">1.</span> <span class="nav-text">安装配置shadowsocks+ChinaDNS+dns-forwarder</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="nav-number">1.1.</span> <span class="nav-text">添加软件源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">在线安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E7%BA%BF%E5%AE%89%E8%A3%85"><span class="nav-number">1.3.</span> <span class="nav-text">离线安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEshadowsocks"><span class="nav-number">1.4.</span> <span class="nav-text">配置shadowsocks</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.4.1.</span> <span class="nav-text">添加服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.4.2.</span> <span class="nav-text">设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">访问控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEChinaDNS"><span class="nav-number">1.5.</span> <span class="nav-text">配置ChinaDNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdns-forwarder"><span class="nav-number">1.6.</span> <span class="nav-text">配置dns-forwarder</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEHTTP%E4%BB%A3%E7%90%86privoxy-%E5%8F%AF%E9%80%89"><span class="nav-number">2.</span> <span class="nav-text">安装配置HTTP代理privoxy(可选)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-%E6%96%B9%E5%BC%8F%E4%B8%80%EF%BC%88%E6%B3%A8%E6%84%8F%E5%85%88%EF%BC%8C%E5%85%88%E9%85%8D%E7%BD%AE%E5%A5%BD%E5%86%8D%E5%90%AF%E5%8A%A8%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">配置 方式一（注意先，先配置好再启动）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-%E6%96%B9%E5%BC%8F%E4%BA%8C"><span class="nav-number">2.3.</span> <span class="nav-text">配置 方式二</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%BE%91-etc-config-privoxy"><span class="nav-number">2.3.1.</span> <span class="nav-text">编辑&#x2F;etc&#x2F;config&#x2F;privoxy</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEPAC%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">配置PAC文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85pip"><span class="nav-number">3.1.</span> <span class="nav-text">安装pip</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85genpac"><span class="nav-number">3.2.</span> <span class="nav-text">安装genpac</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90SOCKS5%E4%BB%A3%E7%90%86%E6%96%B9%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">生成SOCKS5代理方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90HTTP%E4%BB%A3%E7%90%86%E6%96%B9%E5%BC%8F"><span class="nav-number">3.4.</span> <span class="nav-text">生成HTTP代理方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%9B%B4%E6%96%B0%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">自动更新配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B0%E5%BB%BA%E8%84%9A%E6%9C%AC"><span class="nav-number">4.1.</span> <span class="nav-text">新建脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E6%9D%83%E9%99%90"><span class="nav-number">4.2.</span> <span class="nav-text">更改权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="nav-number">4.3.</span> <span class="nav-text">添加定时任务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#macos%E7%B3%BB%E7%BB%9F"><span class="nav-number">5.1.</span> <span class="nav-text">macos系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Maktub_小明"
+      src="/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Maktub_小明</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://www.maktub.cn/" title="主站 → https:&#x2F;&#x2F;www.maktub.cn&#x2F;" rel="noopener" target="_blank"><i class="fa fa-globe fa-fw"></i>主站</a>
+      </span>
+  </div>
+
+
+<!-- recent posts -->
+    <div class="links-of-blogroll motion-element links-of-blogroll-block">
+        <div class="links-of-blogroll-title recent-posts-title">
+	    <i class="fa fa-history " aria-hidden="true"></i>
+            近期文章
+	</div>
+	<ul class="links-of-blogroll-list recent-posts-list">
+	        <li class="my-links-of-blogroll-item">
+		    <a href="/2021/05/03/Esxi%E4%B9%8Bkvm-opencore-bigsur%E9%BB%91%E8%8B%B9%E6%9E%9C/" title="Esxi之kvm-opencore-bigsur黑苹果" target="">
+		    Esxi之kvm-opencore-bigsur黑苹果
+		    </a>
+		</li>
+	        <li class="my-links-of-blogroll-item">
+		    <a href="/2020/06/10/Esxi%E4%B9%8Bkvm%E5%AE%89%E8%A3%85%E9%BB%91%E8%8B%B9%E6%9E%9C/" title="Esxi之kvm安装黑苹果" target="">
+		    Esxi之kvm安装黑苹果
+		    </a>
+		</li>
+	        <li class="my-links-of-blogroll-item">
+		    <a href="/2020/04/12/openwrt%E4%B9%8Bshadowsock%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/" title="openwrt之shadowsock服务器搭建" target="">
+		    openwrt之shadowsock服务器搭建
+		    </a>
+		</li>
+	        <li class="my-links-of-blogroll-item">
+		    <a href="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/" title="openwrt之shadowsock做PAC代理" target="">
+		    openwrt之shadowsock做PAC代理
+		    </a>
+		</li>
+	        <li class="my-links-of-blogroll-item">
+		    <a href="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" title="openwrt之zerotier异地组网" target="">
+		    openwrt之zerotier异地组网
+		    </a>
+		</li>
+	</ul>
+    </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+      <meta itemprop="name" content="Maktub_小明">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Maktub_Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          openwrt之shadowsock做PAC代理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-11 21:51:33" itemprop="dateCreated datePublished" datetime="2020-01-11T21:51:33+00:00">2020-01-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%BD%AF%E8%B7%AF%E7%94%B1/" itemprop="url" rel="index"><span itemprop="name">软路由</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="安装配置shadowsocks-ChinaDNS-dns-forwarder"><a href="#安装配置shadowsocks-ChinaDNS-dns-forwarder" class="headerlink" title="安装配置shadowsocks+ChinaDNS+dns-forwarder"></a>安装配置<code>shadowsocks</code>+<code>ChinaDNS</code>+<code>dns-forwarder</code></h2><h3 id="添加软件源"><a href="#添加软件源" class="headerlink" title="添加软件源"></a>添加软件源</h3><ol>
+<li>添加证书<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;openwrt-dist.pub</span><br><span class="line">opkg-key add openwrt-dist.pub</span><br></pre></td></tr></table></figure></li>
+<li>编辑<code>/etc/opkg/customfeeds.conf</code>,添加软件源<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">src&#x2F;gz openwrt_dist http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64</span><br><span class="line">src&#x2F;gz openwrt_dist_luci http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;luci</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="在线安装"><a href="#在线安装" class="headerlink" title="在线安装"></a>在线安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">opkg install ChinaDNS</span><br><span class="line">opkg install luci-app-chinadns</span><br><span class="line">opkg install dns-forwarder</span><br><span class="line">opkg install luci-app-dns-forwarder</span><br><span class="line">opkg install shadowsocks-libev</span><br><span class="line">opkg install luci-app-shadowsocks</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="离线安装"><a href="#离线安装" class="headerlink" title="离线安装"></a>离线安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">opkg update</span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;ChinaDNS_1.3.3-1_x86_64.ipk</span><br><span class="line">opkg install ChinaDNS_1.3.3-1_x86_64.ipk </span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;dns-forwarder_1.2.1-2_x86_64.ipk</span><br><span class="line">opkg install dns-forwarder_1.2.1-2_x86_64.ipk</span><br><span class="line">wget http:&#x2F;&#x2F;openwrt-dist.sourceforge.net&#x2F;packages&#x2F;base&#x2F;x86_64&#x2F;shadowsocks-libev_3.3.4-1_x86_64.ipk</span><br><span class="line">opkg install shadowsocks-libev_3.3.4-1_x86_64.ipk</span><br><span class="line">opkg install luci-app-chinadns</span><br><span class="line">opkg install luci-app-dns-forwarder</span><br><span class="line">opkg install luci-app-shadowsocks</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置shadowsocks"><a href="#配置shadowsocks" class="headerlink" title="配置shadowsocks"></a>配置<code>shadowsocks</code></h3><h4 id="添加服务器"><a href="#添加服务器" class="headerlink" title="添加服务器"></a>添加服务器</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/00.png"></p>
+<h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/01.png"> </p>
+<h4 id="访问控制"><a href="#访问控制" class="headerlink" title="访问控制"></a>访问控制</h4><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/02.png"></p>
+<h3 id="配置ChinaDNS"><a href="#配置ChinaDNS" class="headerlink" title="配置ChinaDNS"></a>配置<code>ChinaDNS</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/03.png"></p>
+<h3 id="配置dns-forwarder"><a href="#配置dns-forwarder" class="headerlink" title="配置dns-forwarder"></a>配置<code>dns-forwarder</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/04.png"></p>
+<h2 id="安装配置HTTP代理privoxy-可选"><a href="#安装配置HTTP代理privoxy-可选" class="headerlink" title="安装配置HTTP代理privoxy(可选)"></a>安装配置HTTP代理<code>privoxy</code>(可选)</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opkg install privoxy </span><br><span class="line">opkg install luci-app-privoxy </span><br><span class="line">opkg install luci-i18n-privoxy-zh-cn</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-方式一（注意先，先配置好再启动）"><a href="#配置-方式一（注意先，先配置好再启动）" class="headerlink" title="配置 方式一（注意先，先配置好再启动）"></a>配置 方式一<code>（注意先，先配置好再启动）</code></h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/05.png"><br><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/06.png"></p>
+<h3 id="配置-方式二"><a href="#配置-方式二" class="headerlink" title="配置 方式二"></a>配置 方式二</h3><h4 id="编辑-etc-config-privoxy"><a href="#编辑-etc-config-privoxy" class="headerlink" title="编辑/etc/config/privoxy"></a>编辑<code>/etc/config/privoxy</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">config privoxy &#39;privoxy&#39;</span><br><span class="line">        option confdir &#39;&#x2F;etc&#x2F;privoxy&#39;</span><br><span class="line">        option logdir &#39;&#x2F;var&#x2F;log&#39;</span><br><span class="line">        option logfile &#39;privoxy.log&#39;</span><br><span class="line">        list filterfile &#39;default.filter&#39;</span><br><span class="line">        list actionsfile &#39;match-all.action&#39;</span><br><span class="line">        list actionsfile &#39;default.action&#39;</span><br><span class="line">        list listen_address &#39;0.0.0.0:8118&#39;</span><br><span class="line">        option toggle &#39;1&#39;</span><br><span class="line">        option enable_remote_toggle &#39;1&#39;</span><br><span class="line">        option enable_edit_actions &#39;1&#39;</span><br><span class="line">        option forwarded_connect_retries &#39;0&#39;</span><br><span class="line">        option keep_alive_timeout &#39;300&#39;</span><br><span class="line">        option debug_512 &#39;1&#39;</span><br><span class="line">        option debug_4096 &#39;1&#39;</span><br><span class="line">        option debug_8192 &#39;1&#39;</span><br><span class="line">        list forward_socks5 &#39;&#x2F; 127.0.0.1:1080    .&#39;</span><br><span class="line">        list forward &#39;192.168.*.*&#x2F;      .&#39;</span><br><span class="line">        list forward &#39;127.*.*.*&#x2F;        .&#39;</span><br><span class="line">        list forward &#39;10.*.*.*&#x2F; .&#39;</span><br><span class="line">        list forward &#39;localhost&#x2F; .&#39;</span><br><span class="line"></span><br><span class="line">config system &#39;system&#39;</span><br><span class="line">        option boot_delay &#39;5&#39;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置PAC文件"><a href="#配置PAC文件" class="headerlink" title="配置PAC文件"></a>配置<code>PAC</code>文件</h2><h3 id="安装pip"><a href="#安装pip" class="headerlink" title="安装pip"></a>安装<code>pip</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opkg install python3-pip</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装genpac"><a href="#安装genpac" class="headerlink" title="安装genpac"></a>安装<code>genpac</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install genpac</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成SOCKS5代理方式"><a href="#生成SOCKS5代理方式" class="headerlink" title="生成SOCKS5代理方式"></a>生成<code>SOCKS5</code>代理方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成HTTP代理方式"><a href="#生成HTTP代理方式" class="headerlink" title="生成HTTP代理方式"></a>生成<code>HTTP</code>代理方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;PROXY 192.168.3.2:8118&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动更新配置"><a href="#自动更新配置" class="headerlink" title="自动更新配置"></a>自动更新配置</h2><h3 id="新建脚本"><a href="#新建脚本" class="headerlink" title="新建脚本"></a>新建脚本</h3><ul>
+<li><p><code>/etc/script/gen_pac.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;bin&#x2F;genpac --proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; --gfwlist-proxy&#x3D;&quot;SOCKS5 192.168.3.2:1080&quot; -o &#x2F;www&#x2F;gfwlist.pac</span><br></pre></td></tr></table></figure></li>
+<li><p><code>/etc/script/gen_chnroute.sh</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;bin&#x2F;wget -O- &#39;http:&#x2F;&#x2F;ftp.apnic.net&#x2F;apnic&#x2F;stats&#x2F;apnic&#x2F;delegated-apnic-latest&#39; | awk -F\| &#39;&#x2F;CN\|ipv4&#x2F; &#123; printf(&quot;%s&#x2F;%d\n&quot;, $4, 32-log($5)&#x2F;log(2)) &#125;&#39; &gt; &#x2F;etc&#x2F;chinadns_chnroute.txt</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="更改权限"><a href="#更改权限" class="headerlink" title="更改权限"></a>更改权限</h3><p><code>系统</code> &gt;&gt; <code>计划任务</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x &#x2F;etc&#x2F;script&#x2F;gen_pac.sh</span><br><span class="line">chmod +x &#x2F;etc&#x2F;script&#x2F;gen_chnroute.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加定时任务"><a href="#添加定时任务" class="headerlink" title="添加定时任务"></a>添加定时任务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">14  4  8  *  *  sh &#x2F;etc&#x2F;script&#x2F;gen_chnroute.sh </span><br><span class="line">14  4  8  *  *  sh &#x2F;etc&#x2F;script&#x2F;gen_pac.sh </span><br></pre></td></tr></table></figure>
+<p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/07.png"></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h3 id="macos系统"><a href="#macos系统" class="headerlink" title="macos系统"></a>macos系统</h3><p><img src="/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/08.png"></p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://openwrt-dist.sourceforge.net/">openwrt shadowsock 教程</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/JinnLynn/genpac">genpac</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Maktub_小明
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://blog.maktub.cn/2020/01/11/openwrt%E4%B9%8Bshadowsock%E5%81%9APAC%E4%BB%A3%E7%90%86/" title="openwrt之shadowsock做PAC代理">https://blog.maktub.cn/2020/01/11/openwrt之shadowsock做PAC代理/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/openwrt/" rel="tag"># openwrt</a>
+              <a href="/tags/shadowsock/" rel="tag"># shadowsock</a>
+              <a href="/tags/privoxy/" rel="tag"># privoxy</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/01/11/openwrt%E4%B9%8Bzerotier%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" rel="prev" title="openwrt之zerotier异地组网">
+                  <i class="fa fa-chevron-left"></i> openwrt之zerotier异地组网
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/04/12/openwrt%E4%B9%8Bshadowsock%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/" rel="next" title="openwrt之shadowsock服务器搭建">
+                  openwrt之shadowsock服务器搭建 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+<script src="/js/comments.js"></script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Maktub_小明</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">11k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10 分钟</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  <script class="next-config" data-name="nprogress" type="application/json">{&quot;enable&quot;:true,&quot;spinner&quot;:true}</script>
+  <script src="/js/third-party/nprogress.js"></script>
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{&quot;enable&quot;:true,&quot;tags&quot;:&quot;all&quot;,&quot;js&quot;:&quot;https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;npm&#x2F;mathjax@3.1.4&#x2F;es5&#x2F;tex-mml-chtml.js&quot;}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
